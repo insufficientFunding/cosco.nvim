@@ -14,7 +14,7 @@ local M = {}
 ---Removes the line endings from the current line (, or ;)
 ---@param context LineContext
 function M.remove_line_endings(context)
-   if LINE_ENDINGS_REGEX:match_str(context.current_line_last_char) then
+   if LINE_ENDINGS_REGEX:match_str(context.current_line_last) then
       vim.cmd('s/[,;]\\?$//e')
    end
 end
@@ -22,17 +22,18 @@ end
 ---Converts the current line ending to a semicolon
 ---@param context LineContext
 function M.convert_to_semicolon(context)
-   if context.current_line_last_char == ':' then return end
+   if context.current_line_last == ':' then return end
    vim.cmnd('s/[,;]\\?$/;/e')
 end
 
 ---Converts the current line ending to a comma
 ---@param context LineContext
 function M.convert_to_comma(context)
-   if context.current_line_last_char == ',' then return end
+   if context.current_line_last == ',' then return end
    vim.cmd('s/[,;]\\?$/,/e')
 end
 
+---Adds a line ending to the current line
 function M.add_line_ending()
    if vim.bo.readonly then return end
    if lib.should_ignore_file() then return end
@@ -41,19 +42,17 @@ function M.add_line_ending()
 
    if lib.should_skip_lines(context) then return end
 
-   print('hi')
-
-   if context.prev_line_last_char == ',' then
-      if context.next_line_last_char == ',' then
+   if context.prev_line_last == ',' then
+      if context.next_line_last == ',' then
          M.convert_to_comma(context)
       elseif context.next_line_indent < context.current_line_indent then
          M.convert_to_semicolon(context)
       elseif context.next_line_indent == context.current_line_indent then
          M.convert_to_comma(context)
       end
-   elseif context.prev_line_last_char == ';' then
+   elseif context.prev_line_last == ';' then
       M.convert_to_semicolon(context)
-   elseif context.prev_line_last_char == '{' then
+   elseif context.prev_line_last == '{' then
    end
 end
 

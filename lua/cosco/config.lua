@@ -9,14 +9,11 @@ local config = {
 }
 
 ---@class CoscoConfig
+---@field options Options
 local M = {}
 
-M.default = config
----@diagnostic disable-next-line: missing-fields
-M.options = {}
-
 function M.setup(opts)
-   M.options = vim.tbl_deep_extend('keep', M.default, opts or {})
+   M.options = vim.tbl_deep_extend('keep', config, opts or {})
 end
 
 return M
